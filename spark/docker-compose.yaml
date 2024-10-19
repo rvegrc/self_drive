@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  spark:
+    build: .
+    # command: "command"
+    ports:
+      - "8002:19888" 
+    volumes:
+      - ./files:/app/files
+      - ../data:/app/data
+      - ../eda:/app/eda
+      - ../tmp:/app/tmp
+      - ../mlruns:/app/mlruns
+      - ../geo:/app/geo     
+      - ../logs:/app/logs
+      - ../tools:/app/tools
+    env_file:
+      - ../.env
+    networks:
+      - mynetwork
+  
+  # selenium:
+  #   image: selenium/standalone-chrome:latest
+  #   container_name: selenium-after-spark
+  #   ports:
+  #     - "5900:5900"
+  #     - "4444:4444"
+  #   privileged: true
+  #   # resources ram and cpu:
+  #   shm_size: 2g
+  #   depends_on:
+  #     - spark
+  #   networks:
+  #     - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
