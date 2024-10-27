@@ -6,13 +6,10 @@ services:
     ports:
       - "8002:19888" 
     volumes:
-      - ./files:/app/files
       - ../data:/app/data
       - ../eda:/app/eda
       - ../tmp:/app/tmp
-      - ../mlruns:/app/mlruns
-      - ../geo:/app/geo     
-      - ../logs:/app/logs
+      - ../mlruns:/app/mlruns     
       - ../tools:/app/tools
     env_file:
       - ../.env
