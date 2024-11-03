@@ -1,0 +1,2 @@
+# Get real direct links usable with tools like curl or wget for files stored in Yandex.Disk.
+wldhx.yadisk-direct==0.0.6

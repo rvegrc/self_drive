@@ -92,10 +92,12 @@ def plot_hist_mm_lines(values: pd.Series, name: str):
         name (str): name of the values
     """    
     plt.figure(figsize=(12, 6))
-    sns.histplot(values, kde=True)
-    plt.axvline(values.mean(), color='r', linestyle='--', label=f'Mean: {values.mean():.2f}')
-    plt.axvline(values.median(), color='g', linestyle='--', label=f'Median: {values.median():.2f}')
-    plt.title(f'{name} distribution')
+    # Sturges’ Rule to determine the optimal number of bins to use in a histogram. source https://www.statology.org/sturges-rule/
+    sns.histplot(values, kde=True, bins='sturges')
+    plt.axvline(values.mean(), color='r', linestyle='--', label=f'Mean value of: {values.mean():.2f}')
+    plt.axvline(values.median(), color='g', linestyle='--', label=f'Median value of: {values.median():.2f}')
+    plt.title(f'{name} distribution') 
     plt.ylabel(f'Frequency, sum: {values.count()}')
     plt.legend()
-    plt.show()
+    # Adjust layout to prevent clipping
+    plt.tight_layout()
