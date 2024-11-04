@@ -3,3 +3,4 @@
 *mlruns/
 *logs/
 *tmp/
+*__pycache__/
