@@ -84,12 +84,13 @@ def replace_date_col(dict_of_dfs, path_new_data, dcol_name):
                             df.loc[i, col] = pd.to_datetime('2149-06-06').date()
                             df.to_csv(f'{path_new_data}/{key}.csv', index=False)
 
-def plot_hist_mm_lines(values: pd.Series, name: str):
+def plot_hist_mm_lines(values: pd.Series, name: str, measure: str):
     """Plots histogram with mean and median lines.
 
     Args:
         values (pd.Series): values to plot
         name (str): name of the values
+        measure (str): measure of the values
     """    
     plt.figure(figsize=(12, 6))
     # Sturges’ Rule to determine the optimal number of bins to use in a histogram. source https://www.statology.org/sturges-rule/
