@@ -6,9 +6,10 @@ from pyspark.sql import DataFrame as SparkDataFrame
 
 from pyspark.sql import functions as F
 
-def check_null_spark(dfs):
-    '''Function to check null values in each column spark df'''
-    dfs.select([F.count(F.when(F.isnull(c), c)).alias(c) for c in dfs.columns]).show()
+def check_nn_spark(dfs):
+    '''Function to check null and nan values in each column spark df'''
+    
+    dfs.select([F.count(F.when(F.isnull(c) | F.isnan(c), c)).alias(c) for c in dfs.columns]).show()
 
 # write def for update data from xls to db
 
