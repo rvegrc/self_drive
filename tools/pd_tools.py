@@ -107,3 +107,23 @@ def plot_hist_mm_lines(values: pd.Series, name: str, measure: str):
     plt.legend()
     # Adjust layout to prevent clipping
     plt.tight_layout()
+
+def get_feature_importances(model, train, target, tmp_path):
+    '''Get feature importances from the model and save it to csv file
+    and plot feature importances'''
+    fi = pd.Series(model.feature_importances_)
+    # Normalize feature importances
+    feature_importances = [i / fi.sum() for i in fi]
+    # add feature names
+    features_cols = train.drop(columns=target).columns
+    feature_importances = pd.DataFrame(
+        list(zip(features_cols, feature_importances)),
+        columns=["feature", "importance"]
+    )
+    # sort by importance
+    feature_importances = feature_importances.sort_values(by="importance", ascending=False)
+    feature_importances.to_csv(f'{tmp_path}/feature_importances_{target}.csv')
+
+    sns.barplot(x=feature_importances['importance'], y=feature_importances['feature'])
+     # Adjust layout to prevent clipping
+    plt.tight_layout()

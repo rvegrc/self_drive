@@ -50,3 +50,19 @@ def check_upd_schemas(dfs_old: SparkDataFrame, dfs_new: SparkDataFrame) -> Spark
         if dict_old[key] != dict_new[key]:
             dfs_new = dfs_new.withColumn(key, F.col(key).cast(dict_old[key]))
     return dfs_new
+
+def get_feature_importances(model, train, target, tmp_path):
+    fi = pd.Series(model_tuned.stages[-1].getFeatureImportances())
+    # Normalize feature importances
+    feature_importances = [i / fi.sum() for i in fi]
+    # add feature names
+    features_cols = train.drop(target, f'{target}_diff').columns
+    feature_importances = pd.DataFrame(
+        list(zip(features_cols, feature_importances)),
+        columns=["feature", "importance"]
+    )
+    # sort by importance
+    feature_importances = feature_importances.sort_values(by="importance", ascending=False)
+    feature_importances.to_csv(f'{tmp_path}/feature_importances_{target}.csv')
+
+    sns.barplot(x=feature_importances['importance'], y=feature_importances['feature'])
