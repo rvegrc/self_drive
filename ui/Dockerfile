@@ -1,14 +1,10 @@
 # app/Dockerfile
 
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
 COPY . /app/
-
-# COPY ../ds_salary/data/job_title.csv /app/
-
-# COPY ../ds_salary/data/country_name.csv /app/
 
 RUN pip3 install -r requirements.txt
 

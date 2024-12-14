@@ -1,0 +1,15 @@
+services:
+  ui:
+    build: .
+    # command: ["streamlit", "run", "ui.py", "--server.port=45000", "--server.address=0.0.0.0"] # entrypoint
+    ports:
+      - "45000:45000" 
+    volumes:
+      - ../data:/app/data
+      - ../tmp:/app/tmp
+      - ../mlruns:/app/mlruns     
+      - ../tools:/app/tools
+    # env_file:
+    #   - ../.env
+    networks:
+      - mynetwork
