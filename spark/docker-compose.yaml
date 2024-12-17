@@ -9,7 +9,8 @@ services:
       - ../eda:/app/eda
       - ../tmp:/app/tmp
       - ../mlruns:/app/mlruns     
-      - ../tools:/app/tools
+      # - ../tools:/app/tools
+      - ../../tools:/app/tools
     env_file:
       - ../.env
     networks:
