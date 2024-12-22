@@ -3,9 +3,16 @@ import os
 import joblib
 import pandas as pd
 
+root_path = "."
+CH_IP = os.getenv('CH_IP')
+CH_USER = os.getenv('CH_USER')
+CH_PASS = os.getenv('CH_PASS')
+
 import mlflow
 # client = mlflow.MlflowClient(tracking_uri='http://127.0.0.1:8888') # for saving mlruns in local webserver
 # mlflow.set_tracking_uri='http://127.0.0.1:8888'
+your_mlflow_tracking_uri = f'{root_path}/mlruns' 
+mlflow.set_tracking_uri(your_mlflow_tracking_uri)
 
 app = FastAPI() # name of the FastAPI instance
 
@@ -19,8 +26,8 @@ client = clickhouse_connect.get_client(host=CH_IP, port=8123, username=CH_USER, 
 
 app = FastAPI() # name of the FastAPI instance
 
-# load file from clickhouse
-measure_service_values_flag = client.query_df('select * from transerv_dev.measure_service_values_flag') # create db for system files
+# load list of model from clickhouse
+# models = client.query_df('select * from transerv_dev.measure_service_values_flag') # create db for system files
 
 # load model from mlflow
 

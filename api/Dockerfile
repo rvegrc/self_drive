@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 # 
 COPY api.py .
 
-# COPY .env .
+# COPY ../.env .
 
 # EXPOSE 8000
 
