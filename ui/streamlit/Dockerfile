@@ -22,5 +22,3 @@ EXPOSE 8501
 
 # Add a health check (ensure your app responds to this endpoint)
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
-
-ENTRYPOINT ["streamlit", "run", "ui-st.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats=false"]

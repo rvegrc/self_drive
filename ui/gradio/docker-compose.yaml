@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # command: [ "python", "ui.py", "--server_name", "0.0.0.0", "--server_port", "7860" ] # entrypoint
     ports:
       - "7860:7860" 
     volumes:
@@ -17,7 +16,8 @@ services:
     networks:
       - mynetwork
 
-    entrypoint: [ "python", "ui-gr.py", "--server_name", "0.0.0.0", "--server_port", "7860" ]
+    # entrypoint: ["python", "ui-gr.py", "--server_name", "0.0.0.0", "--server_port", "7860"]
+    entrypoint: ["python", "ui-gr.py"]
 
 networks:
   mynetwork:
