@@ -1,0 +1,27 @@
+services:
+  ui-gr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # command: [ "python", "ui.py", "--server_name", "0.0.0.0", "--server_port", "7860" ] # entrypoint
+    ports:
+      - "7860:7860" 
+    volumes:
+      - ../../data:/app/data
+      - ../../tmp:/app/tmp
+      - ../../mlruns:/app/mlruns     
+      - ../../../tools:/app/tools
+
+    # env_file:
+    #   - ../.env
+    networks:
+      - mynetwork
+
+    entrypoint: [ "python", "ui-gr.py", "--server_name", "0.0.0.0", "--server_port", "7860" ]
+
+networks:
+  mynetwork:
+    driver: bridge
+
+
+  
