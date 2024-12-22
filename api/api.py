@@ -3,6 +3,9 @@ import os
 import joblib
 import pandas as pd
 
+# import preprocess data function
+from make_df_all_ids import make_df_all_ids
+
 root_path = "."
 CH_IP = os.getenv('CH_IP')
 CH_USER = os.getenv('CH_USER')
@@ -47,3 +50,15 @@ def read_dataset(dataset_id: str):
 @app.get("/test")
 def read_test():
     return {"Hello": "Test"}
+
+@app.get("/dataset_create")
+def dataset_create(path: str):
+    # model_loaded = joblib.load('./best_model.pkl')
+    # def read_names(path: str):
+    '''Create dataset from files in the path'''
+    # get ids in the path
+    ids = os.listdir(path)
+    files = ['control.csv', 'localization.csv', 'metadata.json']
+    data_clm = make_df_all_ids(path, ids, files)
+
+    return {"Path": path, "new": data_clm}

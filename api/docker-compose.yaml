@@ -11,9 +11,9 @@ services:
       - ../../tools:/app/tools
     env_file:
       - ../.env
-    networks:
-      - mynetwork
+#     networks:
+#       - mynetwork
 
-networks:
-  mynetwork:
-    driver: bridge
+# networks:
+#   mynetwork:
+#     driver: bridge

@@ -5,17 +5,21 @@ import requests
 
 
 
-st.title('Transport price predict 2') # +session state 
 
-file_upload = st.file_uploader(label = 'Upload_csv')
-process_file = st.button(label="Process_file")
+st.title('Car coords predict') # +session state 
 
-if process_file:
-    result = requests.post('http://localhost:8000/list_predict', json = pd.read_csv(file_upload).to_dict(orient='list'))
+st.write('This is a simple web app to predict car coordinates')
+# select folder with observations
+select_folder = st.selectbox(label='Select folder', options=['folder1', 'folder2', 'folder3'])
+st.write(f'You selected {select_folder}')
+
+
+if select_folder:
+    result = requests.post('http://localhost:8000/dataset_create', json={'path': select_folder})
     result_csv = pd.DataFrame(result.json()).to_csv(index=False)
 
     
-    st.download_button(label='Download_csv', data=result_csv, file_name='predict.csv')
+    st.download_button(label='Download_created_dataset_in_csv', data=result_csv, file_name='dataset.csv')
 
    
 

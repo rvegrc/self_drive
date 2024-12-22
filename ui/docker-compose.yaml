@@ -8,8 +8,15 @@ services:
       - ../data:/app/data
       - ../tmp:/app/tmp
       - ../mlruns:/app/mlruns     
-      - ../tools:/app/tools
+      - ../../tools:/app/tools
     # env_file:
     #   - ../.env
-    networks:
-      - mynetwork
+    # networks:
+    #   - mynetwork
+
+# networks:
+#   mynetwork:
+#     driver: bridge
+
+
+  

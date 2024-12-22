@@ -4,12 +4,23 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY . /app/
+COPY requirements.txt /app
 
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    software-properties-common \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install the required packages
 RUN pip3 install -r requirements.txt
 
-EXPOSE 45000
+COPY ui.py .
 
-HEALTHCHECK CMD curl --fail http://localhost:45000/_stcore/health
+EXPOSE 8501
 
-ENTRYPOINT ["streamlit", "run", "ui.py", "--server.port=45000", "--server.address=0.0.0.0"]
+# Add a health check (ensure your app responds to this endpoint)
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+ENTRYPOINT ["streamlit", "run", "ui.py", "--server.port=8501", "--server.address=0.0.0.0"]
