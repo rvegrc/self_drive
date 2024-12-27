@@ -1,8 +1,6 @@
 services:
   ui-st:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     # command: ["streamlit", "run", "ui.py", "--server.port=45000", "--server.address=0.0.0.0"] # entrypoint
     ports:
       - "8501:8501" 
@@ -12,7 +10,7 @@ services:
       - ../../mlruns:/app/mlruns     
       - ../../../tools:/app/tools
         
-    entrypoint: ["streamlit", "run", "ui-st.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats", "false"]
+    # entrypoint: ["streamlit", "run", "ui-st.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats", "false"]
     # entrypoint: ["streamlit", "run", "ui-st.py", "--server.port=8501", "--server.address=0.0.0.0"]
     
     # env_file:
