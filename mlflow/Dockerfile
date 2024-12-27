@@ -1,5 +1,4 @@
-FROM python:3.11.9
-
+FROM python:3.10-slim
 WORKDIR /app
 
 USER root
