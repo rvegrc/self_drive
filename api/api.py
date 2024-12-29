@@ -59,6 +59,8 @@ def dataset_create(path: str):
     # get ids in the path
     ids = os.listdir(path)
     files = ['control.csv', 'localization.csv', 'metadata.json']
+    # table read from clickhouse
+
     data_clm = make_df_all_ids(path, ids, files)
 
     return {"Path": path, "new": data_clm}

@@ -5,11 +5,11 @@ services:
     ports:
       - "8002:19888" 
     volumes:
-      - ../data:/app/data
-      - ../eda:/app/eda
-      - ../tmp:/app/tmp
-      - ../mlruns:/app/mlruns     
-      - ../../tools:/app/tools
+      - ./data:/app/data
+      - ./eda:/app/eda
+      - ./tmp:/app/tmp
+      - ./mlruns:/app/mlruns     
+      - ../tools:/app/tools
     env_file:
       - ./.env
     networks:
@@ -23,7 +23,7 @@ services:
     ports:
       - "15000:5000"
     volumes:
-      - ../mlruns:/app/mlruns
+      - ./mlruns:/app/mlruns
     command: mlflow server --host 0.0.0.0 -p 5000
     networks:
       - mynetwork
