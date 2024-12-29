@@ -1,4 +1,8 @@
-FROM apache/spark:3.4.2-scala2.12-java11-python3-ubuntu 
+# FROM apache/spark:3.4.2-scala2.12-java11-python3-ubuntu 
+FROM apache/spark:3.5.4-scala2.12-java17-python3-ubuntu
+# FROM bitnami/spark:3.5.4-debian-12-r0
+
+
 
 WORKDIR /app
 

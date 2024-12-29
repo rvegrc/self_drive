@@ -4,4 +4,5 @@ clickhouse-cityhash
 lz4
 apache-airflow-providers-apache-spark
 apache-airflow-providers-common-compat
-sedona
+# install for send command and connect to external spark
+findspark
