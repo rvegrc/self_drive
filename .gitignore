@@ -4,3 +4,5 @@
 *logs/
 *tmp/
 *__pycache__/
+airflow.cfg
+airflow-webserver.pid
