@@ -6,10 +6,10 @@ services:
       - "8501:8501" 
     volumes:
       - ./content:/app/content
-      # - ../../data:/app/data
-      # - ../../tmp:/app/tmp
-      # - ../../mlruns:/app/mlruns     
-      # - ../../../tools:/app/tools
+      # - ../data:/app/data
+      # - ../tmp:/app/tmp
+      # - ../mlruns:/app/mlruns     
+      # - ../../tools:/app/tools
         
     entrypoint: ["streamlit", "run", "ui_st.py", "--server.port=8501", "--server.address=0.0.0.0", "--browser.gatherUsageStats", "false"]
     # entrypoint: ["streamlit", "run", "ui_st.py", "--server.port=8501", "--server.address=0.0.0.0"]
