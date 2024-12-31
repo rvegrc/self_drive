@@ -4,11 +4,11 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 from datetime import datetime, timedelta
 from airflow.decorators import dag, task
 default_args={
-    "owner": "Smalch",
+    "owner": "rvegrc",
     "depends_on_past": False,
     "retries": 0
 }
-ram = 50
+ram = 20
 cpu = 30*3
 @dag(
     tags=["test", "stocks"],
@@ -27,7 +27,7 @@ def spark_example():
         task_id='spark_submit_job',
         application='dags/spark_app/spark_1.py',
         #conn_id='spark_master',
-        conn_id='my_spark_conn',
+        conn_id='spark',
         total_executor_cores='1',
         executor_cores='1',
         executor_memory=f'{ram}g',

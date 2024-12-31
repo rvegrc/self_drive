@@ -6,7 +6,7 @@ from lib.clickhouse_operator_extended import ClickHouseOperatorExtended
 import logging
 CLICKHOUSE_CONN_ID = 'clickhouse'
 default_args={
-    "owner": "Smalch",
+    "owner": "rvegrc",
     "depends_on_past": False,
     "retries": 0,
     "retry_delay": duration(seconds=5),
