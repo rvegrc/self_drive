@@ -49,6 +49,22 @@ CREATE TABLE ycup.localization (
 
 
 
+drop table if exists ycup.metadata;
+    
+CREATE TABLE ycup.metadata (
+    id UInt32 COMMENT 'id поездки'
+    ,`vehicle_id` UInt8 COMMENT 'идентификатор ТС'
+    ,`vehicle_model` UInt8 COMMENT 'идентификатор модели ТС'
+    ,`vehicle_model_modification` UInt8 COMMENT 'идентификатор модификации модели ТС'
+    ,`location_reference_point_id` UInt8 COMMENT 'идентификатор точки отсчета координат'
+    ,`front_tire` UInt8 COMMENT 'идентификатор передних шин'
+    ,`rear_tire` UInt8 COMMENT 'идентификатор задних шин'
+    ,`ride_year` UInt16 COMMENT 'год поездки'
+    ,`ride_month` UInt8 COMMENT 'месяц поездки'
+    ,`ride_day` UInt8 COMMENT 'день поездки'
+    ) 
+    ENGINE = MergeTree()
+    ORDER BY tuple();
 
 
 
