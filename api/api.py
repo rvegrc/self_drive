@@ -34,6 +34,15 @@ app = FastAPI() # name of the FastAPI instance
 
 # load model from mlflow
 
+app = FastAPI()
+
+class DataFrameInput(BaseModel):
+    data: List[Dict]  # Expecting a list of dictionaries as input
+
+
+
+
+
 
 
 @app.get("/")
@@ -51,16 +60,28 @@ def read_dataset(dataset_id: str):
 def read_test():
     return {"Hello": "Test"}
 
-@app.get("/dataset_create")
-def dataset_create(path: str):
-    # model_loaded = joblib.load('./best_model.pkl')
-    # def read_names(path: str):
-    '''Create dataset from files in the path'''
-    # get ids in the path
-    ids = os.listdir(path)
-    files = ['control.csv', 'localization.csv', 'metadata.json']
-    # table read from clickhouse
+# @app.get("/dataset_create")
+# def dataset_create(path: str):
+#     # model_loaded = joblib.load('./best_model.pkl')
+#     # def read_names(path: str):
+#     '''Create dataset from files in the path'''
+#     # get ids in the path
+#     ids = os.listdir(path)
+#     files = ['control.csv', 'localization.csv', 'metadata.json']
+#     # table read from clickhouse
 
-    data_clm = make_df_all_ids(path, ids, files)
+#     data_clm = make_df_all_ids(path, ids, files)
 
-    return {"Path": path, "new": data_clm}
+#     return {"Path": path, "new": data_clm}
+
+@app.post("/process-dataframe")
+async def process_dataframe(input_data: DataFrameInput):
+    # Convert the JSON data into a Pandas DataFrame
+    df = pd.DataFrame(input_data.data)
+    
+    # Modify the DataFrame (example: add a new column)
+    df["new_column"] = df["column1"] * 2  # Assuming 'column1' exists in the input
+    
+    # Convert the modified DataFrame back to JSON
+    response_data = df.to_dict(orient="records")
+    return {"data": response_data}
