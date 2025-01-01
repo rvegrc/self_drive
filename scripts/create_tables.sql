@@ -67,7 +67,7 @@ CREATE TABLE ycup.metadata (
     ORDER BY tuple();
 
 
-
+show tables in ycup;
 
 
 show grants for developer  -- show grants for user;
