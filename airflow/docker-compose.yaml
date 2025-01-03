@@ -80,7 +80,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ..:/opt/airflow
+    - ..:/opt/airflow/airflow_data
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -107,7 +107,7 @@ services:
       - "7077:7077"
       - "4040:4040"
     volumes:
-      - ..:/opt/airflow
+      - ..:/opt/airflow/airflow_data
     # add same user as in airflow to avoid permission issues
     user: "${AIRFLOW_UID:-50000}:0"
     networks:
@@ -127,7 +127,7 @@ services:
     depends_on:
       - spark-master
     volumes:
-      - ..:/opt/airflow
+      - ..:/opt/airflow/airflow_data
     # add same user as in airflow to avoid permission issues
     user: "${AIRFLOW_UID:-50000}:0"
     networks:
