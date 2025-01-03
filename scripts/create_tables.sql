@@ -67,6 +67,16 @@ CREATE TABLE ycup.metadata (
     ORDER BY tuple();
 
 
+create table tmp.spark_test
+(
+    Name String
+    ,Value Int8
+)
+ENGINE = MergeTree()
+ORDER BY tuple();
+
+
+
 show tables in ycup;
 
 

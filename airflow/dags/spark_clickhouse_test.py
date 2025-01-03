@@ -16,7 +16,7 @@ default_args={
     "depends_on_past": False,
     "retries": 0
 }
-ram = 20
+ram = 5
 cpu = 30*3
 @dag(
     tags=["test", "stocks"],
@@ -60,12 +60,8 @@ def spark_clickhouse_test():
         df.write.parquet(f"{root}/test/test", mode="overwrite")
         df = spark.read.parquet(f"{root}/test/test")
         df.show()
-
-
         #show all folders in the current directory
-        
-
-        
+            
         df.toPandas().to_csv(f"{root}/test/df_test1.csv", index=False)
         spark.stop()
         return pd.read_csv(f"{root}/test/df_test1.csv")
