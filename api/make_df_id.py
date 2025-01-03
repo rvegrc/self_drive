@@ -31,10 +31,6 @@ def make_df_id(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.Data
 
     def interpolate_coords(control_3m, col_min:str, col_max:str):
         '''Interpolate values between max and min values'''
-        # control_interpolated = (control_3m[['ctrl_stamp_ns', 'stamp_ns_max', 'stamp_ns_min', col_min, col_max]]
-        #             .apply(lambda x: (x['ctrl_stamp_ns'] - x['stamp_ns_min']) / (x['stamp_ns_max'] - x['stamp_ns_min']) * (x[col_max] - x[col_min]) + x[col_min], axis=1)
-        #             )
-        # return control_interpolated
     
         control_interpolated = (control_3m[['ctrl_stamp_ns', 'stamp_ns_max', 'stamp_ns_min', col_min, col_max]]
                 .apply(lambda x:
@@ -42,32 +38,9 @@ def make_df_id(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.Data
                     else (x['ctrl_stamp_ns'] - x['stamp_ns_min']) / (x['stamp_ns_max'] - x['stamp_ns_min']) * (x[col_max] - x[col_min]) + x[col_min], axis=1
                     )
                 )
-        # x = control_3m
-        # print(f"stamp_ns_max {x['stamp_ns_max'].isnull().sum()}")
-        # print(f"stamp_ns_min {x['stamp_ns_min'].isnull().sum()}")
-        # print(f"{col_min} {x[col_min].isnull().sum()}")
-        # print(f"{col_max} {x[col_max].isnull().sum()}")
-        # print((x['ctrl_stamp_ns'] - x['stamp_ns_min']).isnull().sum())
-        # print((x['stamp_ns_max'] - x['stamp_ns_min']).isnull().sum())
-        # print((x[col_max] - x[col_min]).isnull().sum())
-        # print(control_interpolated.isnull().sum())
 
         return control_interpolated
 
-    def tires_to_columns_date(metadata:pd.DataFrame):
-        '''Change tires column to front and rear columns and 
-        convert ride_date to datetime and add year, month, day columns'''
-        metadata['front_tire'] = metadata['tires'][0]
-        metadata['rear_tire'] = metadata['tires'][1]
-        metadata = metadata.drop(columns=['tires']).reset_index(drop=True).loc[:0]
-        # convert ride_date to datetime and add year, month, day columns
-        metadata['ride_date'] = pd.to_datetime(metadata['ride_date'])
-        metadata['ride_year'] = metadata['ride_date'].dt.year
-        metadata['ride_month'] = metadata['ride_date'].dt.month
-        metadata['ride_day'] = metadata['ride_date'].dt.day
-        metadata = metadata.drop(columns=['ride_date'])
-        
-        return metadata
 
     def add_metadata(control:pd.DataFrame, metadata:pd.DataFrame):
         '''Add metada to each row in control dataframe'''
@@ -94,10 +67,8 @@ def make_df_id(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.Data
     # select coords and control columns
     control_interpolated = control_3m[contr_cols + coords_cols]
    
-    # change tires column to front and rear columns and convert ride_date to datetime and add year, month, day columns
-    metadata_m = tires_to_columns_date(metadata)
  
-    clm = add_metadata(control_interpolated, metadata_m)
+    clm = add_metadata(control_interpolated, metadata)
 
     # add acceleration_level and steering columns with shifts
     for col in ['acceleration_level', 'steering']:
@@ -120,35 +91,3 @@ def make_df_id(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.Data
 
 
     return clm
-
-
-
-def make_df_all_ids(path: str, ids: pd.Series, files: list) -> pd.DataFrame:
-    '''Read data in each file, preprocess and concat files for each id, concat df for each id and save it to parquet file '''
-    data = []
-    for i in ids:
-        for file in files:
-            if file == 'control.csv':
-                control = pd.read_csv(f'{path}/{i}/{file}')
-            elif file == 'localization.csv':
-                localization = pd.read_csv(f'{path}/{i}/{file}')
-            elif file == 'metadata.json':
-                metadata = pd.read_json(f'{path}/{i}/{file}')
-        
-       
-        clm = make_df_id(control, localization, metadata)
-
-        # add id column
-        clm['id'] = i
-
-        # clm.to_parquet(f'{tmp_data_path}/clm_{i}.parquet', index=False)
-        
-        data.append(clm)
-        if i % 1000 == 0:
-            print(f'id={i}')
-    
-    # Concatenate all DataFrames from the list
-    data_clm = pd.concat(data, ignore_index=True)
-
-     
-    return data_clm

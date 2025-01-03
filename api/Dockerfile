@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # 
 COPY api.py .
-COPY make_df_all_ids.py .
+COPY make_df_id.py .
 
 # COPY ../.env .
 
