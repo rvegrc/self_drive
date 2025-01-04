@@ -3,6 +3,11 @@ import os
 import joblib
 import pandas as pd
 
+root_path = "."
+CH_IP = os.getenv('CH_IP')
+CH_USER = os.getenv('CH_USER')
+CH_PASS = os.getenv('CH_PASS')
+
 # Spark initialize
 import findspark
 findspark.init()
@@ -28,7 +33,7 @@ packages = [
 
 ]
 
-ram = 20
+ram = 5
 # cpu = 22*3
 # Define the application name and setup session
 appName = "Connect To ClickHouse via PySpark"
@@ -36,14 +41,19 @@ spark = (SparkSession.builder
         .appName(appName)
         .config("spark.jars.packages", ",".join(packages))
         .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
+        .config("spark.sql.catalog.clickhouse.host", CH_IP)
         .config("spark.sql.catalog.clickhouse.protocol", "http")
         .config("spark.sql.catalog.clickhouse.http_port", "8123")
+        .config("spark.sql.catalog.clickhouse.user", CH_USER)
+        .config("spark.sql.catalog.clickhouse.password", CH_PASS)
         .config("spark.executor.memory", f"{ram}g")
         .config("spark.driver.maxResultSize", f"{ram}g")
         .config("spark.driver.memory", f"{ram}g")
         .config("spark.executor.memoryOverhead", f"{ram}g")
         .getOrCreate()
 )
+
+spark.sql("use clickhouse")
 
 from synapse.ml.lightgbm import LightGBMRegressor as LightGBMRegressor_spark
 
@@ -52,10 +62,7 @@ from synapse.ml.lightgbm import LightGBMRegressor as LightGBMRegressor_spark
 # import preprocess data function
 from make_df_id import make_df_id
 
-root_path = "."
-CH_IP = os.getenv('CH_IP')
-CH_USER = os.getenv('CH_USER')
-CH_PASS = os.getenv('CH_PASS')
+
 
 import mlflow
 # client = mlflow.MlflowClient(tracking_uri='http://127.0.0.1:8888') # for saving mlruns in local webserver

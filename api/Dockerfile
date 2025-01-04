@@ -1,6 +1,8 @@
-FROM python:3.10-slim
+# FROM python:3.10-slim
+FROM bitnami/spark:3.5.4-debian-12-r0
 
 WORKDIR /app
+
 
 COPY requirements.txt .
 

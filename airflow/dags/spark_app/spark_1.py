@@ -7,10 +7,6 @@ CH_IP = os.getenv('CH_IP')
 CH_USER = os.getenv('CH_USER')
 CH_PASS = os.getenv('CH_PASS')
 
-CH_IP = '31.10.72.47'
-CH_USER = 'chad'
-CH_PASS = 'chGabadura123$'
-
 
 def run():
     packages = [
