@@ -14,7 +14,8 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # 
 COPY api.py .
-COPY make_df_id.py .
+COPY get_df_from_db.py .
+COPY df_preprocess.py .
 
 # COPY ../.env .
 

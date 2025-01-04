@@ -12,7 +12,7 @@ import pandas as pd
 
 
 root_path = "."
-
+preprocessor_path = f'{root_path}/preprocessor'
 
 CH_IP = os.getenv('CH_IP')
 CH_USER = os.getenv('CH_USER')
@@ -125,15 +125,15 @@ async def get_df(id: int, targets: List[str]):
             limit 10'''
         )
 
-        df = get_df_from_db(control, localizations, metadata).to_json(orient='records')    
+        df = get_df_from_db(control, localizations, metadata) 
         
+        df_prepr = {}
         for target in targets:
-            df_prepr = df_preprocess(df, target, id, preprocessor_path)
+            df_prepr[target] = df_preprocess(df, target, id, preprocessor_path)
 
+        
 
-
-
-        return df_prepr
+        return df_prepr.to_json(orient='records')   
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

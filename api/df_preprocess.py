@@ -5,7 +5,6 @@ import numpy as np
 import category_encoders as ce
 
 
-preprocessor_path = f'{root_path}/preprocessor'
 
 
 def set_cols_for_model(train:pd.DataFrame, target:str=None):
