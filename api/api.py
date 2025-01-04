@@ -2,6 +2,8 @@ from fastapi import FastAPI
 import os
 import joblib
 import pandas as pd
+from pydantic import BaseModel
+from typing import List, Dict
 
 root_path = "."
 CH_IP = os.getenv('CH_IP')
@@ -28,8 +30,8 @@ packages = [
     ,"com.clickhouse:clickhouse-jdbc:0.7.1-patch1"
     ,"com.clickhouse:clickhouse-http-client:0.7.1-patch1"
     ,"org.apache.httpcomponents.client5:httpclient5:5.3.1"
-    ,"ai.catboost:catboost-spark_3.5_2.12:1.2.7"
-    ,"com.microsoft.azure:synapseml_2.12:1.0.8"
+    # ,"ai.catboost:catboost-spark_3.5_2.12:1.2.7"
+    # ,"com.microsoft.azure:synapseml_2.12:1.0.8"
 
 ]
 
@@ -55,13 +57,11 @@ spark = (SparkSession.builder
 
 spark.sql("use clickhouse")
 
-from synapse.ml.lightgbm import LightGBMRegressor as LightGBMRegressor_spark
+# from synapse.ml.lightgbm import LightGBMRegressor as LightGBMRegressor_spark
 
 
-
-# import preprocess data function
-from make_df_id import make_df_id
-
+import joblib
+import clickhouse_connect
 
 
 import mlflow
@@ -70,24 +70,18 @@ import mlflow
 your_mlflow_tracking_uri = f'{root_path}/mlruns' 
 mlflow.set_tracking_uri(your_mlflow_tracking_uri)
 
-app = FastAPI() # name of the FastAPI instance
+# import preprocess data function
+from make_df_id import make_df_id
 
-# load model from mlflow
-
-
-import joblib
-import clickhouse_connect
 
 client = clickhouse_connect.get_client(host=CH_IP, port=8123, username=CH_USER, password=CH_PASS)
+
 
 app = FastAPI() # name of the FastAPI instance
 
 # load list of model from clickhouse
 # models = client.query_df('select * from transerv_dev.measure_service_values_flag') # create db for system files
 
-# load model from mlflow
-
-app = FastAPI()
 
 class DataFrameInput(BaseModel):
     data: List[Dict]  # Expecting a list of dictionaries as input
