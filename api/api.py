@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import os
 import joblib
 import pandas as pd
@@ -9,6 +9,9 @@ root_path = "."
 CH_IP = os.getenv('CH_IP')
 CH_USER = os.getenv('CH_USER')
 CH_PASS = os.getenv('CH_PASS')
+
+
+from make_df_id import make_df_id
 
 # Spark initialize
 import findspark
@@ -48,6 +51,7 @@ spark = (SparkSession.builder
         .config("spark.sql.catalog.clickhouse.http_port", "8123")
         .config("spark.sql.catalog.clickhouse.user", CH_USER)
         .config("spark.sql.catalog.clickhouse.password", CH_PASS)
+        .config("spark.sql.catalog.clickhouse.database", "default")
         .config("spark.executor.memory", f"{ram}g")
         .config("spark.driver.maxResultSize", f"{ram}g")
         .config("spark.driver.memory", f"{ram}g")
@@ -89,27 +93,32 @@ class DataFrameInput(BaseModel):
 
 @app.post("/get_df")
 async def get_df(id: int):
-    control = client.query_df(f'''
-        select * 
-        from ycup.control yc
-        where yc.id = {id}
-        limit 10'''
-    )
+    try:
+        control = client.query_df(f'''
+            select * 
+            from ycup.control yc
+            where yc.id = {id}
+            limit 10'''
+        )
 
-    localizations = client.query_df(f'''
-        select * 
-        from ycup.localization yl
-        where yl.id = {id}
-        limit 10'''
-    )
+        localizations = client.query_df(f'''
+            select * 
+            from ycup.localization yl
+            where yl.id = {id}
+            limit 10'''
+        )
 
-    metadata = client.query_df(f'''
-        select * 
-        from ycup.metadata ym
-        where ym.id = {id}
-        limit 10'''
-    )
+        metadata = client.query_df(f'''
+            select * 
+            from ycup.metadata ym
+            where ym.id = {id}
+            limit 10'''
+        )
 
-    df_prepr = make_df_id(control, localizations, metadata)
+        df_prepr = make_df_id(control, localizations, metadata).to_json(orient='records')    
+        
+        return df_prepr
     
-    return df_prepr
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+ 

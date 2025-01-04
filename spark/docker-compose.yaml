@@ -11,6 +11,7 @@ services:
       - ../mlruns:/app/mlruns     
       # - ../tools:/app/tools
       - ../../tools:/app/tools
+      - ../api:/app/api
     env_file:
       - ../.env
     networks:

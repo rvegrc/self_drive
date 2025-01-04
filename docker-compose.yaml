@@ -10,6 +10,7 @@ services:
       - ./tmp:/app/tmp
       - ./mlruns:/app/mlruns     
       - ../tools:/app/tools
+      - ./api:/app/api
     env_file:
       - ./.env
     networks:
