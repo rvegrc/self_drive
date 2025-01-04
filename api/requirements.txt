@@ -6,3 +6,4 @@ joblib
 mlflow==2.12.2
 clickhouse-connect
 findspark
+category-encoders

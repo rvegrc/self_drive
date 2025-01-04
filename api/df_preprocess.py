@@ -1,5 +1,41 @@
 
 import pandas as pd
+import numpy as np
+
+import category_encoders as ce
+
+
+preprocessor_path = f'{root_path}/preprocessor'
+
+
+def set_cols_for_model(train:pd.DataFrame, target:str=None):
+    '''Set num and cat columns for model'''
+    
+    cols_checked = train.columns
+
+    # target in [ ] because yaw hase more then one letter
+    not_target = list(set(targets) - set([target]))
+
+
+    # Set num columns
+    control_cols = ['ctrl_stamp_ns', 'acceleration_level', 'steering']
+    shift_cols = [col for col in cols_checked if '_shift' in col]
+    tmp = [col for col in shift_cols for nt in not_target if f'{nt}_' in col]
+    shift_cols = list(set(shift_cols) - set(tmp))
+
+    last_10_cols = [col for col in cols_checked if 'last_10' in col]
+    tmp = [col for col in last_10_cols for nt in not_target if f'{nt}_' in col]
+    last_10_cols = list(set(last_10_cols) - set(tmp))
+
+    num_cols = control_cols + shift_cols + last_10_cols
+
+    # Set categorical columns
+    cols_temp = [col for col in cols_checked if col in control_cols or 'last' in col or 'shift' in col or 'diff' in col]
+    cat_cols = list(set(cols_checked) - set(cols_temp) - set(targets))
+
+
+    return cat_cols, num_cols
+
 
 
 # catboost encoder
@@ -40,7 +76,7 @@ def ctb_encoder(test:pd.DataFrame, target:str, id) -> pd.DataFrame:
     return test_target
 
 
-def preprocessed_test(test:pd.DataFrame, target:str, id:int) -> SparkDataFrame:
+def df_preprocess(test: pd.DataFrame, target: str, id: int, preprocessor_path: str) -> pd.DataFrame:
     '''Preprocess test one id_obs data for model
     cat_cols encoded with CatBoostEncoder
     num_cols transformed with PowerTransformer
@@ -62,7 +98,7 @@ def preprocessed_test(test:pd.DataFrame, target:str, id:int) -> SparkDataFrame:
 
     # load preprocessor
     # cat_encoder = pd.read_pickle(f'{tmp_data_path}/cat_encoder_{target}.pkl')
-    preprocessor = pd.read_pickle(f'{tmp_data_path}/preprocessor_{target}.pkl')
+    preprocessor = pd.read_pickle(f'{preprocessor_path}/preprocessor_{target}.pkl')
     
     # transform the encoded test data with preprocessor
     test_prepr = preprocessor.transform(ctb_encoder(test_id, target, id))
@@ -87,8 +123,5 @@ def preprocessed_test(test:pd.DataFrame, target:str, id:int) -> SparkDataFrame:
     # add row_number_by_id column
     test_prepr['row_number_by_id'] = test_prepr.sort_values(['id_obs', 'ctrl_stamp_ns']).groupby('id_obs').cumcount()
 
-    
-      
-    test_prepr = spark.createDataFrame(test_prepr)
 
     return test_prepr

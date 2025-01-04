@@ -1,17 +1,27 @@
 from fastapi import FastAPI, HTTPException
-import os
-import joblib
-import pandas as pd
+
 from pydantic import BaseModel
 from typing import List, Dict
 
+
+import os
+import joblib
+import pandas as pd
+
+
+
+
 root_path = "."
+
+
 CH_IP = os.getenv('CH_IP')
 CH_USER = os.getenv('CH_USER')
 CH_PASS = os.getenv('CH_PASS')
 
 
-from make_df_id import make_df_id
+from api.get_df_from_db import get_df_from_db
+from api.df_preprocess import df_preprocess
+
 
 # Spark initialize
 import findspark
@@ -75,7 +85,7 @@ your_mlflow_tracking_uri = f'{root_path}/mlruns'
 mlflow.set_tracking_uri(your_mlflow_tracking_uri)
 
 # import preprocess data function
-from make_df_id import make_df_id
+from api.get_df_from_db import get_df_from_db
 
 
 client = clickhouse_connect.get_client(host=CH_IP, port=8123, username=CH_USER, password=CH_PASS)
@@ -92,7 +102,7 @@ class DataFrameInput(BaseModel):
 
 
 @app.post("/get_df")
-async def get_df(id: int):
+async def get_df(id: int, targets: List[str]):
     try:
         control = client.query_df(f'''
             select * 
@@ -115,8 +125,14 @@ async def get_df(id: int):
             limit 10'''
         )
 
-        df_prepr = make_df_id(control, localizations, metadata).to_json(orient='records')    
+        df = get_df_from_db(control, localizations, metadata).to_json(orient='records')    
         
+        for target in targets:
+            df_prepr = df_preprocess(df, target, id, preprocessor_path)
+
+
+
+
         return df_prepr
     
     except Exception as e:

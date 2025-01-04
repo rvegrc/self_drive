@@ -1,7 +1,7 @@
 import pandas as pd
 
 # read data in each file with spark
-def make_df_id(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.DataFrame) -> pd.DataFrame:
+def get_df_from_db(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.DataFrame) -> pd.DataFrame:
     '''Make a model dataframe from control, localization and metadata dataframes for a single id'''
 
     def find_min_max(control:pd.DataFrame, localization:pd.DataFrame):
