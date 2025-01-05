@@ -20,7 +20,7 @@ CH_PASS = os.getenv('CH_PASS')
 
 
 from union_dfs import union_dfs
-from df_preprocess import df_preprocess
+from api.df_preprocessor import df_preprocess
 
 
 # # Spark initialize
@@ -129,7 +129,7 @@ async def get_df(ids: List[int], targets: List[str]):
                             
         df_prepr = {}
         for target in targets:
-            df_prepr[target] = df_preprocess(df, target, id, preprocessor_path)
+            df_prepr[target] = df_preprocess(df, target, id, preprocessor_path, targets)
 
                     
         # test return for one target

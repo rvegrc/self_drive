@@ -7,7 +7,7 @@ import category_encoders as ce
 
 
 
-def set_cols_for_model(train:pd.DataFrame, target:str=None):
+def set_cols_for_model(train: pd.DataFrame, target: str=None, targets: list=None) -> list:
     '''Set num and cat columns for model'''
     
     cols_checked = train.columns
@@ -38,13 +38,13 @@ def set_cols_for_model(train:pd.DataFrame, target:str=None):
 
 
 # catboost encoder
-def ctb_encoder(test:pd.DataFrame, target:str, id) -> pd.DataFrame:
+def ctb_encoder(test: pd.DataFrame, target: str, id: int, targets: list) -> pd.DataFrame:
     '''Encode with CatBoostEncoder categorical columns of each target test data    '''     
     # drop unnecessary columns
     test_target = test[test['id'] == id].drop(columns=['z', 'roll', 'pitch'])
 
     # set columns for one target
-    cat_cols, num_cols = set_cols_for_model(test_target, target)
+    cat_cols, num_cols = set_cols_for_model(test_target, target, targets)
 
     # obsereved columns
     obs_cols = [col for col in test_target.columns if 'obs' in col] 
@@ -75,7 +75,7 @@ def ctb_encoder(test:pd.DataFrame, target:str, id) -> pd.DataFrame:
     return test_target
 
 
-def df_preprocess(test: pd.DataFrame, target: str, id: int, preprocessor_path: str) -> pd.DataFrame:
+def df_preprocessor(test: pd.DataFrame, target: str, id: int, preprocessor_path: str, targets: list) -> pd.DataFrame:
     '''Preprocess test one id_obs data for model
     cat_cols encoded with CatBoostEncoder
     num_cols transformed with PowerTransformer
@@ -100,7 +100,7 @@ def df_preprocess(test: pd.DataFrame, target: str, id: int, preprocessor_path: s
     preprocessor = pd.read_pickle(f'{preprocessor_path}/preprocessor_{target}.pkl')
     
     # transform the encoded test data with preprocessor
-    test_prepr = preprocessor.transform(ctb_encoder(test_id, target, id))
+    test_prepr = preprocessor.transform(ctb_encoder(test_id, target, id, targets))
 
     # del num and reminder from col names
     test_prepr.columns = [col.split("__")[1] if "__" in col else col for col in test_prepr.columns]
