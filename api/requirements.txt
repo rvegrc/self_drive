@@ -1,5 +1,5 @@
 fastapi[standard]
-pydantic
+pydantic==2.10.4.
 uvicorn
 pandas==2.2.3
 joblib
@@ -7,3 +7,4 @@ mlflow==2.12.2
 clickhouse-connect
 findspark
 category-encoders
+scikit-learn==1.5.2

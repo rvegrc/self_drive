@@ -1,6 +1,10 @@
 
 import pandas as pd
 import numpy as np
+import sklearn
+
+# for correct work of category_encoders
+sklearn.set_config(transform_output='pandas')
 
 import category_encoders as ce
 
@@ -57,7 +61,7 @@ def ctb_encoder(test: pd.DataFrame, target: str, id: int, targets: list) -> pd.D
     test_target.fillna(value={f'{target}_shift_1': -1}, inplace=True)
 
     # encode categorical columns
-    test_target = ce.cat_boost.CatBoostEncoder(cols=cat_cols).fit_transform(test_target, test_target[f'{target}_shift_1'])
+    test_target = ce.CatBoostEncoder(cols=cat_cols).fit_transform(test_target, test_target[f'{target}_shift_1'])
 
     # del num and reminder from col names
     # train_target.columns = [col.split("__")[1] if "__" in col else col for col in train_target.columns]
