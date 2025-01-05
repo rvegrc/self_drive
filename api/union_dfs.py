@@ -1,8 +1,8 @@
 import pandas as pd
 
 # read data in each file with spark
-def get_df_from_db(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.DataFrame) -> pd.DataFrame:
-    '''Make a model dataframe from control, localization and metadata dataframes for a single id'''
+def union_dfs(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.DataFrame) -> pd.DataFrame:
+    '''Make a interpolated dataframe from control, localization and metadata dataframes for a single id'''
 
     def find_min_max(control:pd.DataFrame, localization:pd.DataFrame):
         '''Find min and max timestamp in localization for each timestamp in control dataframe'''
