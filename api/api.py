@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 
 from pydantic import BaseModel
 from typing import List, Dict
@@ -20,7 +20,7 @@ CH_PASS = os.getenv('CH_PASS')
 
 
 from union_dfs import union_dfs
-from api.df_preprocessor import df_preprocess
+from df_preprocessor import df_preprocessor
 
 
 # # Spark initialize
@@ -93,12 +93,13 @@ app = FastAPI() # name of the FastAPI instance
 # models = client.query_df('select * from transerv_dev.measure_service_values_flag') # create db for system files
 
 
-class DataFrameInput(BaseModel):
-    data: List[Dict]  # Expecting a list of dictionaries as input
 
 
-@app.post("/get_df")
-async def get_df(ids: List[int], targets: List[str]):
+
+@app.post("/predict_from_db")
+# ... - use it as a must parameter
+async def predict_from_db(ids: List[int]=Query(..., description='ids of observation')
+                          , targets: List[str]=Query(..., description='targets for prediction')):
     try:
         df_list = []
         for id in ids:
@@ -129,7 +130,7 @@ async def get_df(ids: List[int], targets: List[str]):
                             
         df_prepr = {}
         for target in targets:
-            df_prepr[target] = df_preprocess(df, target, id, preprocessor_path, targets)
+            df_prepr[target] = df_preprocessor(df, target, id, preprocessor_path, targets)
 
                     
         # test return for one target
@@ -137,4 +138,29 @@ async def get_df(ids: List[int], targets: List[str]):
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
- 
+
+class DataFrameInput(BaseModel):
+    control: str
+    localizations: str
+    metadata: str
+
+
+
+@app.post("/predict_from_files")
+async def predict_from_files(df: DataFrameInput, targets: List[str]=Query(..., description='targets for prediction')):
+    try:
+        control_df = pd.read_json(df.control)
+        localizations_df = pd.read_json(df.localizations)
+        metadata_df = pd.read_json(df.metadata)
+
+        df_prepr = {}
+        for target in targets:
+            df_prepr[target] = df_preprocessor(df, target, id, preprocessor_path, targets)
+
+                    
+        # test return for one target
+        return df_prepr[target].to_json(orient='records')   
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    

@@ -15,8 +15,8 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 # 
 COPY api.py .
 COPY union_dfs.py .
-COPY df_preprocess.py .
-COPY preprocessor/ ./preprocessor
+COPY df_preprocessor.py .
+COPY preprocessor .
 
 
 
