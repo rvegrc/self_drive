@@ -39,7 +39,7 @@ CREATE TABLE ycup.train_control (
     ENGINE = MergeTree()
     ORDER BY tuple();
 
-
+-- TRUNCATE TABLE ycup.test_control;
 -- drop table if exists ycup.test_localization;
     
 CREATE TABLE ycup.test_localization (
@@ -55,6 +55,8 @@ CREATE TABLE ycup.test_localization (
     ENGINE = MergeTree()
     ORDER BY tuple();
 
+-- TRUNCATE TABLE ycup.test_localization;
+
 CREATE TABLE ycup.train_localization (
     id UInt32 COMMENT 'id поездки'
     ,`stamp_ns` UInt64 COMMENT 'время в наносекундах от начала сцены'
@@ -69,7 +71,7 @@ CREATE TABLE ycup.train_localization (
     ORDER BY tuple();
 
 
-
+-- TRUNCATE TABLE ycup.test_metadata;
 -- drop table if exists ycup.metadata;
     
 CREATE TABLE ycup.test_metadata (
