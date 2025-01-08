@@ -93,8 +93,7 @@ app = FastAPI() # name of the FastAPI instance
 # models = client.query_df('select * from transerv_dev.measure_service_values_flag') # create db for system files
 
 
-
-
+tables = client.query_df('show tables from ycup')
 
 @app.post("/predict_from_db")
 # ... - use it as a must parameter
@@ -139,12 +138,11 @@ async def predict_from_db(ids: List[int]=Query(..., description='ids of observat
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 class DataFrameInput(BaseModel):
     control: str
     localizations: str
     metadata: str
-
-
 
 @app.post("/predict_from_files")
 async def predict_from_files(df: DataFrameInput, targets: List[str]=Query(..., description='targets for prediction')):

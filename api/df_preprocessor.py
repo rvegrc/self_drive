@@ -11,10 +11,10 @@ import category_encoders as ce
 
 
 
-def set_cols_for_model(train: pd.DataFrame, target: str=None, targets: list=None) -> list:
+def set_cols_for_model(test: pd.DataFrame, target: str=None, targets: list=None) -> list:
     '''Set num and cat columns for model'''
     
-    cols_checked = train.columns
+    cols_checked = test.columns
 
     # target in [ ] because yaw hase more then one letter
     not_target = list(set(targets) - set([target]))
