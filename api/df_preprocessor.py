@@ -11,13 +11,13 @@ import category_encoders as ce
 
 
 
-def set_cols_for_model(test: pd.DataFrame, target: str=None, targets: list=None) -> list:
+def set_cols_for_model(test: pd.DataFrame, target: str=None, targets_all: list=None) -> list:
     '''Set num and cat columns for model'''
     
     cols_checked = test.columns
 
     # target in [ ] because yaw hase more then one letter
-    not_target = list(set(targets) - set([target]))
+    not_target = list(set(targets_all) - set([target]))
 
 
     # Set num columns
@@ -34,7 +34,7 @@ def set_cols_for_model(test: pd.DataFrame, target: str=None, targets: list=None)
 
     # Set categorical columns
     cols_temp = [col for col in cols_checked if col in control_cols or 'last' in col or 'shift' in col or 'diff' in col]
-    cat_cols = list(set(cols_checked) - set(cols_temp) - set(targets))
+    cat_cols = list(set(cols_checked) - set(cols_temp) - set(targets_all))
 
 
     return cat_cols, num_cols
@@ -42,13 +42,13 @@ def set_cols_for_model(test: pd.DataFrame, target: str=None, targets: list=None)
 
 
 # catboost encoder
-def ctb_encoder(test: pd.DataFrame, target: str, id: int, targets: list) -> pd.DataFrame:
+def ctb_encoder(test: pd.DataFrame, target: str, id: int, targets_all: list) -> pd.DataFrame:
     '''Encode with CatBoostEncoder categorical columns of each target test data    '''     
     # drop unnecessary columns
     test_target = test[test['id'] == id].drop(columns=['z', 'roll', 'pitch'])
 
     # set columns for one target
-    cat_cols, num_cols = set_cols_for_model(test_target, target, targets)
+    cat_cols, num_cols = set_cols_for_model(test_target, target, targets_all)
 
     # obsereved columns
     obs_cols = [col for col in test_target.columns if 'obs' in col] 
@@ -67,11 +67,11 @@ def ctb_encoder(test: pd.DataFrame, target: str, id: int, targets: list) -> pd.D
     # train_target.columns = [col.split("__")[1] if "__" in col else col for col in train_target.columns]
 
     # replace -1 to nan
-    test_target[f'{target}_shift_1'].replace(-1, np.nan, inplace=True)
+    test_target[f'{target}_shift_1'] = test_target[f'{target}_shift_1'].replace(-1, np.nan)
 
 
     # add target column to the end
-    test_target[target] = test[target]
+    test_target[target] = test[test['id'] == id][target]
  
     test_target['id_obs'] = id
 
@@ -79,7 +79,7 @@ def ctb_encoder(test: pd.DataFrame, target: str, id: int, targets: list) -> pd.D
     return test_target
 
 
-def df_preprocessor(test: pd.DataFrame, target: str, id: int, preprocessor_path: str, targets: list) -> pd.DataFrame:
+def df_preprocessor(test: pd.DataFrame, target: str, id: int, preprocessor_path: str, targets_all: list) -> pd.DataFrame:
     '''Preprocess test one id_obs data for model
     cat_cols encoded with CatBoostEncoder
     num_cols transformed with PowerTransformer
@@ -104,7 +104,7 @@ def df_preprocessor(test: pd.DataFrame, target: str, id: int, preprocessor_path:
     preprocessor = pd.read_pickle(f'{preprocessor_path}/preprocessor_{target}.pkl')
     
     # transform the encoded test data with preprocessor
-    test_prepr = preprocessor.transform(ctb_encoder(test_id, target, id, targets))
+    test_prepr = preprocessor.transform(ctb_encoder(test_id, target, id, targets_all))
 
     # del num and reminder from col names
     test_prepr.columns = [col.split("__")[1] if "__" in col else col for col in test_prepr.columns]
