@@ -2,32 +2,34 @@ from pyspark.sql import SparkSession
 import os
 
 from dotenv import load_dotenv
+load_dotenv()
 
 CH_IP = os.getenv('CH_IP')
 CH_USER = os.getenv('CH_USER')
 CH_PASS = os.getenv('CH_PASS')
 
 
+
 def run():
-    packages = [
-        "com.clickhouse.spark:clickhouse-spark-runtime-3.5_2.12:0.8.0"
-        # "com.github.housepower:clickhouse-spark-runtime-3.4_2.12:0.7.3"
-        ,"com.clickhouse:clickhouse-jdbc:0.7.1-patch1"
-        # ,"com.clickhouse:clickhouse-jdbc:0.6.0-patch5"
-        ,"com.clickhouse:clickhouse-http-client:0.7.1-patch1"
-        # ,"com.clickhouse:clickhouse-http-client:0.6.0-patch5"
-        ,"org.apache.httpcomponents.client5:httpclient5:5.3.1"
-        # for jdbc 2.7.1 required java 8/11
-        # ,"com.github.housepower:clickhouse-native-jdbc:2.7.1"
+    # packages = [
+    #     "com.clickhouse.spark:clickhouse-spark-runtime-3.5_2.12:0.8.0"
+    #     # "com.github.housepower:clickhouse-spark-runtime-3.4_2.12:0.7.3"
+    #     ,"com.clickhouse:clickhouse-jdbc:0.7.1-patch1"
+    #     # ,"com.clickhouse:clickhouse-jdbc:0.6.0-patch5"
+    #     ,"com.clickhouse:clickhouse-http-client:0.7.1-patch1"
+    #     # ,"com.clickhouse:clickhouse-http-client:0.6.0-patch5"
+    #     ,"org.apache.httpcomponents.client5:httpclient5:5.3.1"
+    #     # for jdbc 2.7.1 required java 8/11
+    #     # ,"com.github.housepower:clickhouse-native-jdbc:2.7.1"
 
 
-    ]
-             
+    # ]
+    
     appName = "Connect To ClickHouse via PySpark"
     
     spark = (SparkSession.builder
          .appName(appName)
-         .config("spark.jars.packages", ",".join(packages))
+        #  .config("spark.jars.packages", ",".join(packages))
         #  .config("spark.sql.catalog.clickhouse", "xenon.clickhouse.ClickHouseCatalog")
          .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
          .config("spark.sql.catalog.clickhouse.host", CH_IP)
@@ -35,6 +37,7 @@ def run():
          .config("spark.sql.catalog.clickhouse.http_port", "8123")
          .config("spark.sql.catalog.clickhouse.user", CH_USER)
          .config("spark.sql.catalog.clickhouse.password", CH_PASS)
+         .config("spark.sql.catalog.clickhouse.database", "default")
             #  .config("spark.sql.debug.maxToStringFields", "100000")
          .getOrCreate()
          )
