@@ -19,7 +19,7 @@ CH_USER = os.getenv('CH_USER')
 CH_PASS = os.getenv('CH_PASS')
 
 
-from union_dfs import union_dfs
+from api.union_df import union_dfs
 from df_preprocessor import df_preprocessor
 
 

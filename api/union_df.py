@@ -1,7 +1,7 @@
 import pandas as pd
 
 # read data in each file with spark
-def union_dfs(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.DataFrame) -> pd.DataFrame:
+def union_df(control:pd.DataFrame, localization:pd.DataFrame, metadata:pd.DataFrame) -> pd.DataFrame:
     '''Make a interpolated dataframe from control, localization and metadata dataframes for a single id'''
 
     def find_min_max(control:pd.DataFrame, localization:pd.DataFrame):
