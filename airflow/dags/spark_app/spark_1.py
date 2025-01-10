@@ -27,8 +27,7 @@ def run():
     
     appName = "Connect To ClickHouse via PySpark"
     
-    spark = (SparkSession.builder
-         .appName(appName)
+    spark = (SparkSession.builder.appName(appName)
         #  .config("spark.jars.packages", ",".join(packages))
         #  .config("spark.sql.catalog.clickhouse", "xenon.clickhouse.ClickHouseCatalog")
          .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
@@ -40,7 +39,8 @@ def run():
          .config("spark.sql.catalog.clickhouse.database", "default")
             #  .config("spark.sql.debug.maxToStringFields", "100000")
          .getOrCreate()
-         )
+    )
+    
     spark.sql("use clickhouse")
 
     # root = "/opt/airflow"
