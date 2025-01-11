@@ -9,6 +9,12 @@ WORKDIR /app
 USER root
 # FROM apache/sedona:latest
 COPY requirements.txt .
+
+# for fix error with using lighgbm in debian 
+RUN apt update && apt install libgomp1  
+
 RUN pip install --no-cache-dir -r requirements.txt
+
+
 # COPY .env .
 CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=19888", "--no-browser", "--allow-root", "--NotebookApp.token='1234'", "--NotebookApp.password='1234'"]

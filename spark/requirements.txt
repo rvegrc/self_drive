@@ -23,7 +23,6 @@ xlrd==2.0.1
 category-encoders
 missingno==0.5.2
 clickhouse-connect==0.8.0
-# for use libgomp1 install
-lightgbm==4.5.0
-# for lightgbm
-# libgomp1
+# lightgbm==4.5.0
+
+
