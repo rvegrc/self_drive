@@ -88,7 +88,9 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
-
+  env_file:
+      - .env
+      
 services:
   spark-master:
     build: 
@@ -310,7 +312,8 @@ services:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
     networks:
       - airflow
-
+  
+  
   airflow-cli:
     <<: *airflow-common
     profiles:

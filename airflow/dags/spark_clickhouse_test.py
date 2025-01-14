@@ -7,11 +7,15 @@ from airflow.decorators import dag, task
 from pyspark.sql import SparkSession
 from pyspark import SparkContext
 import pandas as pd
+from sedona.spark import SedonaContext
+import os
 
 CLICKHOUSE_CONN_ID = 'clickhouse'
 SPARK_CONN_ID = 'spark'
 
-
+CH_IP = os.getenv('CH_IP')
+CH_USER = os.getenv('CH_USER')
+CH_PASS = os.getenv('CH_PASS')
 
 
 
@@ -48,7 +52,7 @@ def spark_clickhouse_test():
     "com.clickhouse:clickhouse-jdbc:0.7.0",
     "com.clickhouse:clickhouse-client:0.7.0",
     "com.clickhouse:clickhouse-http-client:0.7.0",
-    "org.apache.httpcomponents.client5:httpclient5:5.2.1",
+    "org.apache.httpcomponents.client5:httpclient5:5.3.1",
     'org.apache.sedona:sedona-spark-3.5_2.12:1.7.0',
     'org.datasyslab:geotools-wrapper:1.7.0-28.5',
     'uk.co.gresearch.spark:spark-extension_2.12:2.11.0-3.4'
@@ -56,19 +60,19 @@ def spark_clickhouse_test():
 
 
 
-    spark_submit_task = SparkSubmitOperator(
-        packages= ','.join(packages),
-        task_id='spark_submit_task',
-        application='dags/spark_app/spark_1.py',
-        #conn_id='spark_master',
-        conn_id=SPARK_CONN_ID,        
-        total_executor_cores='1',
-        executor_cores='1',
-        executor_memory=f'{ram}g',
-        num_executors='1',
-        driver_memory=f'{ram}g',
-        verbose=True
-    )
+    # spark_submit_task = SparkSubmitOperator(
+    #     packages= ','.join(packages),
+    #     task_id='spark_submit_task',
+    #     application='dags/spark_app/spark_1.py',
+    #     #conn_id='spark_master',
+    #     conn_id=SPARK_CONN_ID,        
+    #     total_executor_cores='1',
+    #     executor_cores='1',
+    #     executor_memory=f'{ram}g',
+    #     num_executors='1',
+    #     driver_memory=f'{ram}g',
+    #     verbose=True
+    # )
     
     clickhouse_test_conn = ClickHouseOperatorExtended(
         task_id='clickhouse_test_conn',
@@ -76,23 +80,48 @@ def spark_clickhouse_test():
         sql='test.sql'
     )
 
-    @task.pyspark(conn_id=SPARK_CONN_ID)
-    def run(spark: SparkSession, sc: SparkContext) -> pd.DataFrame:
-        # spark = SparkSession.builder.appName("ExampleJob111").getOrCreate()
-        root = "/opt/airflow"
-        data = [("Alice", 1), ("Bob", 2), ("Charlie", 3)]
-        df = spark.createDataFrame(data, ["Name", "Value"])
-        df.write.parquet(f"{root}/test/test", mode="overwrite")
-        df = spark.read.parquet(f"{root}/test/test")
-        df.show()
-        #show all folders in the current directory
-            
-        df.toPandas().to_csv(f"{root}/test/df_test1.csv", index=False)
-        spark.stop()
-        return pd.read_csv(f"{root}/test/df_test1.csv")
+
+    from functools import reduce
+    from pyspark.sql import DataFrame
+    import pyspark.sql.functions as F
+    import pandas as pd
+
+    packages = [
+            "com.clickhouse.spark:clickhouse-spark-runtime-3.5_2.12:0.8.0"
+            ,"com.clickhouse:clickhouse-jdbc:0.7.0"
+            ,"com.clickhouse:clickhouse-client:0.7.0"
+            ,"com.clickhouse:clickhouse-http-client:0.7.0"
+            ,"org.apache.httpcomponents.client5:httpclient5:5.3.1"
+            ,'org.apache.sedona:sedona-spark-3.5_2.12:1.7.0'
+            ,'org.datasyslab:geotools-wrapper:1.7.0-28.5'
+            ,'uk.co.gresearch.spark:spark-extension_2.12:2.11.0-3.4'
+        ]
+
+    @task.pyspark(
+            conn_id=SPARK_CONN_ID
+            ,config_kwargs={'spark.jars.packages':','.join(packages)}
+        )
+    def run(spark: SparkSession, sc: SparkContext):
+
+        config = (
+            SedonaContext.builder()
+            .config('spark.jars.repositories', 'https://artifacts.unidata.ucar.edu/repository/unidata-all')
+            .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
+            .config("spark.sql.catalog.clickhouse.host", CH_IP)
+            .config("spark.sql.catalog.clickhouse.protocol", "http")
+            .config("spark.sql.catalog.clickhouse.http_port", "8123")
+            .config("spark.sql.catalog.clickhouse.user", CH_USER)
+            .config("spark.sql.catalog.clickhouse.password", CH_PASS) 
+            .config("spark.sql.catalog.clickhouse.database", "default")
+            #.config("spark.clickhouse.write.format", "json")
+            .getOrCreate()
+        )
+        spark = SedonaContext.create(config)
+        sc = spark.sparkContext
+        spark.sql("use clickhouse")
 
 
-    [spark_submit_task, clickhouse_test_conn] >> run()
+    clickhouse_test_conn >> run()
 
 spark_clickhouse_test()
 

@@ -37,6 +37,7 @@ def run():
          .config("spark.sql.catalog.clickhouse.user", CH_USER)
          .config("spark.sql.catalog.clickhouse.password", CH_PASS)
          .config("spark.sql.catalog.clickhouse.database", "default")
+         .config('spark.jars.repositories', 'https://artifacts.unidata.ucar.edu/repository/unidata-all')
             #  .config("spark.sql.debug.maxToStringFields", "100000")
          .getOrCreate()
     )
