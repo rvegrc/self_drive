@@ -7,7 +7,7 @@ from airflow.decorators import dag, task
 from pyspark.sql import SparkSession
 from pyspark import SparkContext
 import pandas as pd
-from sedona.spark import SedonaContext
+# from sedona.spark import SedonaContext
 import os
 
 CLICKHOUSE_CONN_ID = 'clickhouse'
@@ -93,9 +93,9 @@ def spark_clickhouse_test():
             ,"com.clickhouse:clickhouse-client:0.7.0"
             ,"com.clickhouse:clickhouse-http-client:0.7.0"
             ,"org.apache.httpcomponents.client5:httpclient5:5.3.1"
-            ,'org.apache.sedona:sedona-spark-3.5_2.12:1.7.0'
-            ,'org.datasyslab:geotools-wrapper:1.7.0-28.5'
-            ,'uk.co.gresearch.spark:spark-extension_2.12:2.11.0-3.4'
+            # ,'org.apache.sedona:sedona-spark-3.5_2.12:1.7.0'
+            # ,'org.datasyslab:geotools-wrapper:1.7.0-28.5'
+            # ,'uk.co.gresearch.spark:spark-extension_2.12:2.11.0-3.4'
         ]
 
     @task.pyspark(
@@ -104,21 +104,46 @@ def spark_clickhouse_test():
         )
     def run(spark: SparkSession, sc: SparkContext):
 
-        config = (
-            SedonaContext.builder()
-            .config('spark.jars.repositories', 'https://artifacts.unidata.ucar.edu/repository/unidata-all')
-            .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
-            .config("spark.sql.catalog.clickhouse.host", CH_IP)
-            .config("spark.sql.catalog.clickhouse.protocol", "http")
-            .config("spark.sql.catalog.clickhouse.http_port", "8123")
-            .config("spark.sql.catalog.clickhouse.user", CH_USER)
-            .config("spark.sql.catalog.clickhouse.password", CH_PASS) 
-            .config("spark.sql.catalog.clickhouse.database", "default")
-            #.config("spark.clickhouse.write.format", "json")
-            .getOrCreate()
-        )
-        spark = SedonaContext.create(config)
-        sc = spark.sparkContext
+        appName = "Connect To ClickHouse via PySpark"
+        spark = (SparkSession.builder
+                .appName(appName)
+                # .config("spark.jars.packages", ",".join(packages))
+                #  .config("spark.sql.catalog.clickhouse", "xenon.clickhouse.ClickHouseCatalog")
+                .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
+                 .config("spark.sql.catalog.clickhouse.host", CH_IP)
+                .config("spark.sql.catalog.clickhouse.protocol", "http")
+                .config("spark.sql.catalog.clickhouse.http_port", "8123")
+                 .config("spark.sql.catalog.clickhouse.user", CH_USER)
+                 .config("spark.sql.catalog.clickhouse.password", CH_PASS)
+                 .config("spark.sql.catalog.clickhouse.database", "default")
+                #  .config("spark.spark.clickhouse.write.compression.codec", "lz4")
+                #  .config("spark.clickhouse.read.compression.codec", "lz4")
+                 .config("spark.executor.memory", f"{ram}g")
+                #  .config("spark.executor.cores", "5")
+                .config("spark.driver.maxResultSize", f"{ram}g")
+                .config("spark.driver.memory", f"{ram}g")
+                .config("spark.executor.memoryOverhead", f"{ram}g")
+                #  .config("spark.sql.debug.maxToStringFields", "100000")
+                .getOrCreate()
+                )       
+
+
+
+        # config = (
+        #     SedonaContext.builder()
+        #     .config('spark.jars.repositories', 'https://artifacts.unidata.ucar.edu/repository/unidata-all')
+        #     .config("spark.sql.catalog.clickhouse", "com.clickhouse.spark.ClickHouseCatalog")
+        #     .config("spark.sql.catalog.clickhouse.host", CH_IP)
+        #     .config("spark.sql.catalog.clickhouse.protocol", "http")
+        #     .config("spark.sql.catalog.clickhouse.http_port", "8123")
+        #     .config("spark.sql.catalog.clickhouse.user", CH_USER)
+        #     .config("spark.sql.catalog.clickhouse.password", CH_PASS) 
+        #     .config("spark.sql.catalog.clickhouse.database", "default")
+        #     #.config("spark.clickhouse.write.format", "json")
+        #     .getOrCreate()
+        # )
+        # spark = SedonaContext.create(config)
+        # sc = spark.sparkContext
         spark.sql("use clickhouse")
 
 
