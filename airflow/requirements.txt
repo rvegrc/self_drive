@@ -13,8 +13,3 @@ clickhouse-cityhash
 lz4
 apache-airflow-providers-apache-spark==4.11.3
 apache-airflow-providers-common-compat==1.2.2
-# apache-sedona
-# clickhouse-connect
-# geopandas
-# joblib
-# scikit-learn
