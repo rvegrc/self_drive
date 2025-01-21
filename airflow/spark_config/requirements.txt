@@ -1,4 +1,4 @@
-findspark
+findspark==2.0.1
 jupyter
 python-dotenv==1.0.1
 # requirements for project

@@ -1,6 +1,6 @@
 # reuirements for spark
-findspark
 jupyter
+findspark==2.0.1
 python-dotenv==1.0.1
 # requirements for project
 pandas==2.2.3
