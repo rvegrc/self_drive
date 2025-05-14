@@ -13,15 +13,15 @@ ENGINE = MergeTree()
 ORDER BY tuple();
 
 
-create DATABASE if not exists ycup COMMENT 'database for yandex cup';
+create DATABASE if not exists dev_self_drive COMMENT 'database for self-drive project';
 
-GRANT select ON ycup.* TO developer; -- rewrite errors
+GRANT select ON dev_self_drive.* TO developer; -- rewrite errors
 
 SHOW GRANTS FOR developer;
 
--- drop table if exists ycup.control;
+-- drop table if exists dev_self_drive.control;
     
-CREATE TABLE ycup.test_control (
+CREATE TABLE dev_self_drive.test_control (
     id UInt32 COMMENT 'id поездки'
     ,`stamp_ns` UInt64 COMMENT 'время в наносекундах от начала сцены'
     ,`acceleration_level` Int16 COMMENT 'интенсивность ускорения, 0 - нет ускорения, + - ускорение, - - торможение'
@@ -30,7 +30,7 @@ CREATE TABLE ycup.test_control (
     ENGINE = MergeTree()
     ORDER BY tuple();
 
-CREATE TABLE ycup.train_control (
+CREATE TABLE dev_self_drive.train_control (
     id UInt32 COMMENT 'id поездки'
     ,`stamp_ns` UInt64 COMMENT 'время в наносекундах от начала сцены'
     ,`acceleration_level` Int16 COMMENT 'интенсивность ускорения, 0 - нет ускорения, + - ускорение, - - торможение'
@@ -39,10 +39,10 @@ CREATE TABLE ycup.train_control (
     ENGINE = MergeTree()
     ORDER BY tuple();
 
--- TRUNCATE TABLE ycup.test_control;
--- drop table if exists ycup.test_localization;
+-- TRUNCATE TABLE dev_self_drive.test_control;
+-- drop table if exists dev_self_drive.test_localization;
     
-CREATE TABLE ycup.test_localization (
+CREATE TABLE dev_self_drive.test_localization (
     id UInt32 COMMENT 'id поездки'
     ,`stamp_ns` UInt64 COMMENT 'время в наносекундах от начала сцены'
     ,`x` Nullable(Float32) COMMENT 'координата x, на восток'
@@ -55,9 +55,9 @@ CREATE TABLE ycup.test_localization (
     ENGINE = MergeTree()
     ORDER BY tuple();
 
--- TRUNCATE TABLE ycup.test_localization;
+-- TRUNCATE TABLE dev_self_drive.test_localization;
 
-CREATE TABLE ycup.train_localization (
+CREATE TABLE dev_self_drive.train_localization (
     id UInt32 COMMENT 'id поездки'
     ,`stamp_ns` UInt64 COMMENT 'время в наносекундах от начала сцены'
     ,`x` Float32 COMMENT 'координата x, на восток'
@@ -71,10 +71,10 @@ CREATE TABLE ycup.train_localization (
     ORDER BY tuple();
 
 
--- TRUNCATE TABLE ycup.test_metadata;
--- drop table if exists ycup.metadata;
+-- TRUNCATE TABLE dev_self_drive.test_metadata;
+-- drop table if exists dev_self_drive.metadata;
     
-CREATE TABLE ycup.test_metadata (
+CREATE TABLE dev_self_drive.test_metadata (
     id UInt32 COMMENT 'id поездки'
     ,`vehicle_id` UInt8 COMMENT 'идентификатор ТС'
     ,`vehicle_model` UInt8 COMMENT 'идентификатор модели ТС'
@@ -89,7 +89,7 @@ CREATE TABLE ycup.test_metadata (
     ENGINE = MergeTree()
     ORDER BY tuple();
 
-CREATE TABLE ycup.train_metadata (
+CREATE TABLE dev_self_drive.train_metadata (
     id UInt32 COMMENT 'id поездки'
     ,`vehicle_id` UInt8 COMMENT 'идентификатор ТС'
     ,`vehicle_model` UInt8 COMMENT 'идентификатор модели ТС'
@@ -117,7 +117,7 @@ ORDER BY tuple();
 
 
 
-show tables in ycup;
+show tables in dev_self_drive;
 
 
 show grants for developer  -- show grants for user;
