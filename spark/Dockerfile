@@ -10,8 +10,8 @@ USER root
 # FROM apache/sedona:latest
 COPY requirements.txt .
 
-# for fix error with using lighgbm in debian 
-RUN apt update && apt install libgomp1  
+# for fix error with using lighgbm in debian libgomp1
+RUN apt update && apt install -y libgomp1
 
 RUN pip install --no-cache-dir -r requirements.txt
 
